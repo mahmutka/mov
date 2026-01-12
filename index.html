@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOV | Modern Vizyon</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Yerçekimi Oyunu | MOV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,10 +15,11 @@
 
         :root {
             --primary: #6366f1;
-            --primary-dark: #4f46e5;
             --secondary: #ec4899;
-            --bg-dark: #0f0f1a;
-            --bg-card: rgba(255, 255, 255, 0.03);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --bg-dark: #0a0a12;
+            --bg-card: rgba(255, 255, 255, 0.05);
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
         }
@@ -27,82 +29,25 @@
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Animated Background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        .bg-animation::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 60%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
-            animation: pulse 15s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.1) rotate(10deg); }
-        }
-
-        /* Floating Particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--primary);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 20s infinite ease-in-out;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); }
-            25% { transform: translateY(-100px) translateX(50px); }
-            50% { transform: translateY(-50px) translateX(-50px); }
-            75% { transform: translateY(-150px) translateX(25px); }
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1.5rem 5%;
+        /* Header */
+        header {
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 18, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(15, 15, 26, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             z-index: 100;
         }
 
         .logo {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
@@ -110,119 +55,74 @@
             background-clip: text;
         }
 
-        .nav-links {
+        .stats {
             display: flex;
             gap: 2rem;
         }
 
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-primary);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        .stat {
             text-align: center;
-            padding: 2rem;
-            position: relative;
         }
 
-        .hero-content {
-            max-width: 800px;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 50px;
-            color: var(--primary);
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 2rem;
-            animation: fadeInUp 0.8s ease;
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
+        .stat-value {
+            font-size: 1.5rem;
             font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            animation: fadeInUp 0.8s ease 0.2s backwards;
+            color: var(--primary);
         }
 
-        .hero h1 span {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
+        .stat-label {
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto 2.5rem;
-            line-height: 1.7;
-            animation: fadeInUp 0.8s ease 0.4s backwards;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .cta-buttons {
+        /* Game Container */
+        #gameContainer {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Controls Panel */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.8s ease 0.6s backwards;
+            z-index: 100;
         }
 
         .btn {
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.5rem;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 1rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
             cursor: pointer;
             border: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.3);
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 50px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
         }
 
         .btn-secondary {
@@ -232,235 +132,794 @@
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Features Section */
-        .features {
-            padding: 6rem 5%;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .section-title p {
-            color: var(--text-secondary);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 18, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            padding: 2rem;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
+            padding: 2.5rem;
+            text-align: center;
+            max-width: 400px;
+            z-index: 200;
+            animation: fadeIn 0.5s ease;
         }
 
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
+        .instructions.hidden {
+            display: none;
         }
 
-        .feature-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(99, 102, 241, 0.3);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.1));
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
+        .instructions h2 {
             font-size: 1.8rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .feature-card h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-        }
-
-        .feature-card p {
+        .instructions p {
             color: var(--text-secondary);
+            margin-bottom: 1.5rem;
             line-height: 1.6;
         }
 
-        /* Footer */
-        footer {
-            padding: 3rem 5%;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        footer p {
+        .instructions ul {
+            text-align: left;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
         }
 
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
+        .instructions li {
+            margin-bottom: 0.5rem;
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
+        .instructions li strong {
+            color: var(--text-primary);
+        }
+
+        /* Win/Lose Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 18, 0.9);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .overlay.hidden {
+            display: none;
+        }
+
+        .overlay h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .overlay.win h1 {
+            background: linear-gradient(135deg, var(--success), #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .overlay.lose h1 {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .overlay p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
+        /* Level indicator */
+        .level-indicator {
+            position: fixed;
+            top: 5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            z-index: 50;
+        }
+
+        .level-indicator span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Mobile touch indicator */
+        .touch-hint {
+            position: fixed;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 600px) {
+            .stats {
+                gap: 1rem;
             }
-            
-            .hero h1 {
-                font-size: 2.5rem;
+
+            .stat-value {
+                font-size: 1.2rem;
             }
-            
-            .hero p {
-                font-size: 1rem;
+
+            .instructions {
+                margin: 1rem;
+                max-width: calc(100% - 2rem);
             }
-            
-            .cta-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 300px;
+
+            .controls {
+                flex-wrap: wrap;
+                justify-content: center;
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="bg-animation"></div>
-    
-    <div class="particles">
-        <div class="particle" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
-        <div class="particle" style="top: 40%; left: 80%; animation-delay: 2s;"></div>
-        <div class="particle" style="top: 60%; left: 30%; animation-delay: 4s;"></div>
-        <div class="particle" style="top: 80%; left: 70%; animation-delay: 6s;"></div>
-        <div class="particle" style="top: 30%; left: 50%; animation-delay: 8s;"></div>
+    <header>
+        <div class="logo">🌍 MOV</div>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="scoreValue">0</div>
+                <div class="stat-label">Skor</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="levelValue">1</div>
+                <div class="stat-label">Seviye</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="livesValue">3</div>
+                <div class="stat-label">Can</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="level-indicator">Seviye <span id="levelText">1</span> - Hedefe ulaş!</div>
+
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
     </div>
 
-    <nav>
-        <div class="logo">MOV</div>
-        <div class="nav-links">
-            <a href="#home">Ana Sayfa</a>
-            <a href="#features">Özellikler</a>
-            <a href="#about">Hakkında</a>
-            <a href="#contact">İletişim</a>
-        </div>
-    </nav>
+    <div class="touch-hint">Tıkla/Dokun ve sürükle</div>
 
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <span class="badge">✨ Yeni Nesil Deneyim</span>
-            <h1>Geleceği <span>Bugün</span> Keşfedin</h1>
-            <p>Modern teknoloji ve yenilikçi tasarımla dijital dünyada fark yaratın. Hayallerinizi gerçeğe dönüştürmenin zamanı geldi.</p>
-            <div class="cta-buttons">
-                <a href="#" class="btn btn-primary">Başlayın</a>
-                <a href="#" class="btn btn-secondary">Daha Fazla</a>
-            </div>
-        </div>
-    </section>
+    <div class="controls">
+        <button class="btn btn-secondary" onclick="resetLevel()">🔄 Yeniden</button>
+        <button class="btn btn-primary" onclick="launchPlayer()">🚀 Fırlat</button>
+    </div>
 
-    <section class="features" id="features">
-        <div class="section-title">
-            <h2>Neden Biz?</h2>
-            <p>Size en iyi deneyimi sunmak için buradayız</p>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🚀</div>
-                <h3>Hızlı & Güvenilir</h3>
-                <p>En son teknolojilerle optimize edilmiş, yıldırım hızında performans sunan çözümler.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🎨</div>
-                <h3>Modern Tasarım</h3>
-                <p>Kullanıcı deneyimini ön planda tutan, göz alıcı ve şık arayüzler.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>Güvenlik Öncelikli</h3>
-                <p>Verileriniz bizimle güvende. En üst düzey güvenlik standartları.</p>
-            </div>
-        </div>
-    </section>
+    <!-- Instructions Modal -->
+    <div class="instructions" id="instructions">
+        <h2>🌌 Yerçekimi Oyunu</h2>
+        <p>Gezegenler arasında gezinerek hedefe ulaş!</p>
+        <ul>
+            <li><strong>Sürükle ve bırak</strong> ile topun yönünü ve gücünü ayarla</li>
+            <li><strong>Yeşil hedef</strong>e ulaşmaya çalış</li>
+            <li><strong>Gezegenler</strong> seni çeker - dikkatli ol!</li>
+            <li><strong>Kırmızı tehlikeler</strong>den uzak dur</li>
+        </ul>
+        <button class="btn btn-primary" onclick="startGame()">🎮 Oyuna Başla</button>
+    </div>
 
-    <footer>
-        <p>© 2026 MOV. Tüm hakları saklıdır. <a href="#">Gizlilik Politikası</a></p>
-    </footer>
+    <!-- Win Overlay -->
+    <div class="overlay win hidden" id="winOverlay">
+        <h1>🎉 Kazandın!</h1>
+        <p>Harika! Bir sonraki seviyeye geç</p>
+        <button class="btn btn-primary" onclick="nextLevel()">➡️ Sonraki Seviye</button>
+    </div>
+
+    <!-- Lose Overlay -->
+    <div class="overlay lose hidden" id="loseOverlay">
+        <h1>💥 Kaybettin!</h1>
+        <p id="loseMessage">Tekrar dene!</p>
+        <button class="btn btn-primary" onclick="resetLevel()">🔄 Tekrar Dene</button>
+    </div>
 
     <script>
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+        // Canvas Setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-        // Parallax effect on scroll
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const particles = document.querySelectorAll('.particle');
-            particles.forEach((particle, index) => {
-                const speed = 0.2 + (index * 0.1);
-                particle.style.transform = `translateY(${scrolled * speed}px)`;
-            });
-        });
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Game State
+        let gameState = 'waiting'; // waiting, aiming, flying, won, lost
+        let score = 0;
+        let level = 1;
+        let lives = 3;
+
+        // Physics Constants
+        const G = 800; // Gravitational constant
+        const TRAIL_LENGTH = 50;
+
+        // Game Objects
+        let player = null;
+        let planets = [];
+        let target = null;
+        let dangers = [];
+        let trail = [];
+
+        // Aiming
+        let aimStart = null;
+        let aimEnd = null;
+        let isDragging = false;
+
+        // Player Class
+        class Ball {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = radius;
+                this.color = color;
+            }
+
+            draw() {
+                // Glow effect
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, this.radius * 2
+                );
+                gradient.addColorStop(0, this.color);
+                gradient.addColorStop(0.5, this.color + '80');
+                gradient.addColorStop(1, 'transparent');
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 2, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Main ball
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+
+                // Highlight
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.fill();
+            }
+
+            update(dt) {
+                // Apply gravity from all planets
+                for (const planet of planets) {
+                    const dx = planet.x - this.x;
+                    const dy = planet.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist > planet.radius + this.radius) {
+                        const force = (G * planet.mass) / (dist * dist);
+                        this.vx += (dx / dist) * force * dt;
+                        this.vy += (dy / dist) * force * dt;
+                    }
+                }
+
+                this.x += this.vx * dt;
+                this.y += this.vy * dt;
+
+                // Add to trail
+                trail.push({ x: this.x, y: this.y });
+                if (trail.length > TRAIL_LENGTH) {
+                    trail.shift();
+                }
+            }
+        }
+
+        // Planet Class
+        class Planet {
+            constructor(x, y, radius, mass, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.mass = mass;
+                this.color = color;
+                this.rotation = 0;
+            }
+
+            draw() {
+                this.rotation += 0.01;
+
+                // Gravity field visualization
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, this.radius,
+                    this.x, this.y, this.radius * 3
+                );
+                gradient.addColorStop(0, this.color + '40');
+                gradient.addColorStop(1, 'transparent');
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Planet body
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                const bodyGradient = ctx.createRadialGradient(
+                    this.x - this.radius * 0.3, this.y - this.radius * 0.3, 0,
+                    this.x, this.y, this.radius
+                );
+                bodyGradient.addColorStop(0, this.color);
+                bodyGradient.addColorStop(1, this.darkenColor(this.color, 40));
+                ctx.fillStyle = bodyGradient;
+                ctx.fill();
+
+                // Surface details
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    const angle = (i * Math.PI * 2) / 3;
+                    const craterX = Math.cos(angle) * this.radius * 0.5;
+                    const craterY = Math.sin(angle) * this.radius * 0.5;
+                    ctx.arc(craterX, craterY, this.radius * 0.15, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            darkenColor(color, percent) {
+                const num = parseInt(color.replace('#', ''), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.max((num >> 16) - amt, 0);
+                const G = Math.max((num >> 8 & 0x00FF) - amt, 0);
+                const B = Math.max((num & 0x0000FF) - amt, 0);
+                return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+            }
+        }
+
+        // Target Class
+        class Target {
+            constructor(x, y, radius) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.pulsePhase = 0;
+            }
+
+            draw() {
+                this.pulsePhase += 0.05;
+                const pulse = 1 + Math.sin(this.pulsePhase) * 0.2;
+
+                // Outer glow
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, this.radius * 2 * pulse
+                );
+                gradient.addColorStop(0, '#10b981');
+                gradient.addColorStop(0.5, '#10b98140');
+                gradient.addColorStop(1, 'transparent');
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 2 * pulse, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Target ring
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Inner circle
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 0.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#10b981';
+                ctx.fill();
+
+                // Star icon
+                ctx.fillStyle = '#fff';
+                ctx.font = `${this.radius}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('★', this.x, this.y);
+            }
+        }
+
+        // Danger Class
+        class Danger {
+            constructor(x, y, radius) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.rotation = 0;
+            }
+
+            draw() {
+                this.rotation += 0.02;
+
+                // Warning glow
+                const gradient = ctx.createRadialGradient(
+                    this.x, this.y, 0,
+                    this.x, this.y, this.radius * 1.5
+                );
+                gradient.addColorStop(0, '#ef444480');
+                gradient.addColorStop(1, 'transparent');
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 1.5, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Spiky danger
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+
+                ctx.beginPath();
+                const spikes = 8;
+                for (let i = 0; i < spikes * 2; i++) {
+                    const r = i % 2 === 0 ? this.radius : this.radius * 0.5;
+                    const angle = (i * Math.PI) / spikes;
+                    if (i === 0) {
+                        ctx.moveTo(r * Math.cos(angle), r * Math.sin(angle));
+                    } else {
+                        ctx.lineTo(r * Math.cos(angle), r * Math.sin(angle));
+                    }
+                }
+                ctx.closePath();
+                ctx.fillStyle = '#ef4444';
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Level Generation
+        function generateLevel(lvl) {
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Player start position
+            player = new Ball(100, h / 2, 15, '#6366f1');
+            trail = [];
+
+            // Clear arrays
+            planets = [];
+            dangers = [];
+
+            // Target position (right side)
+            target = new Target(w - 100, h / 2, 30);
+
+            // Add planets based on level
+            const planetCount = Math.min(lvl + 1, 5);
+            const planetColors = ['#f59e0b', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16'];
+
+            for (let i = 0; i < planetCount; i++) {
+                const x = 200 + (w - 400) * (i + 0.5) / planetCount + (Math.random() - 0.5) * 100;
+                const y = h / 2 + (Math.random() - 0.5) * (h - 200);
+                const radius = 30 + Math.random() * 30;
+                const mass = radius * 2;
+                planets.push(new Planet(x, y, radius, mass, planetColors[i % planetColors.length]));
+            }
+
+            // Add dangers for higher levels
+            if (lvl >= 2) {
+                const dangerCount = Math.min(lvl - 1, 3);
+                for (let i = 0; i < dangerCount; i++) {
+                    let x, y, valid;
+                    do {
+                        x = 200 + Math.random() * (w - 400);
+                        y = 100 + Math.random() * (h - 200);
+                        valid = true;
+
+                        // Check distance from planets and target
+                        for (const p of planets) {
+                            if (Math.hypot(x - p.x, y - p.y) < p.radius + 80) valid = false;
+                        }
+                        if (Math.hypot(x - target.x, y - target.y) < 100) valid = false;
+                        if (Math.hypot(x - 100, y - h / 2) < 100) valid = false;
+                    } while (!valid);
+
+                    dangers.push(new Danger(x, y, 20));
+                }
+            }
+
+            gameState = 'waiting';
+            updateUI();
+        }
+
+        // Draw Trail
+        function drawTrail() {
+            if (trail.length < 2) return;
+
+            ctx.beginPath();
+            ctx.moveTo(trail[0].x, trail[0].y);
+
+            for (let i = 1; i < trail.length; i++) {
+                ctx.lineTo(trail[i].x, trail[i].y);
+            }
+
+            ctx.strokeStyle = 'rgba(99, 102, 241, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        // Draw Aim Line
+        function drawAimLine() {
+            if (!isDragging || !aimStart || !aimEnd) return;
+
+            const dx = aimStart.x - aimEnd.x;
+            const dy = aimStart.y - aimEnd.y;
+            const power = Math.min(Math.hypot(dx, dy), 200);
+
+            // Power indicator
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y);
+            ctx.lineTo(player.x + dx, player.y + dy);
+
+            const gradient = ctx.createLinearGradient(player.x, player.y, player.x + dx, player.y + dy);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(1, '#ec4899');
+
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Arrow head
+            const angle = Math.atan2(dy, dx);
+            const arrowSize = 15;
+            ctx.beginPath();
+            ctx.moveTo(player.x + dx, player.y + dy);
+            ctx.lineTo(
+                player.x + dx - arrowSize * Math.cos(angle - 0.4),
+                player.y + dy - arrowSize * Math.sin(angle - 0.4)
+            );
+            ctx.moveTo(player.x + dx, player.y + dy);
+            ctx.lineTo(
+                player.x + dx - arrowSize * Math.cos(angle + 0.4),
+                player.y + dy - arrowSize * Math.sin(angle + 0.4)
+            );
+            ctx.stroke();
+
+            // Power text
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Güç: ${Math.round(power)}%`, player.x + dx / 2, player.y + dy / 2 - 20);
+        }
+
+        // Draw Stars Background
+        function drawStars() {
+            const starCount = 100;
+            for (let i = 0; i < starCount; i++) {
+                const x = (i * 137.5) % canvas.width;
+                const y = (i * 77.5) % canvas.height;
+                const size = (i % 3) + 1;
+                const alpha = 0.3 + (i % 5) * 0.1;
+
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.fill();
+            }
+        }
+
+        // Game Loop
+        let lastTime = 0;
+        function gameLoop(currentTime) {
+            const dt = Math.min((currentTime - lastTime) / 1000, 0.05);
+            lastTime = currentTime;
+
+            // Clear canvas
+            ctx.fillStyle = '#0a0a12';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw background
+            drawStars();
+
+            // Draw game objects
+            for (const planet of planets) planet.draw();
+            for (const danger of dangers) danger.draw();
+            target.draw();
+            drawTrail();
+            player.draw();
+            drawAimLine();
+
+            // Update physics if flying
+            if (gameState === 'flying') {
+                player.update(dt);
+
+                // Check collisions
+                // Win condition
+                if (Math.hypot(player.x - target.x, player.y - target.y) < target.radius + player.radius) {
+                    gameState = 'won';
+                    score += level * 100;
+                    updateUI();
+                    document.getElementById('winOverlay').classList.remove('hidden');
+                }
+
+                // Planet collision
+                for (const planet of planets) {
+                    if (Math.hypot(player.x - planet.x, player.y - planet.y) < planet.radius + player.radius) {
+                        loseLife('Gezegene çarptın!');
+                        return;
+                    }
+                }
+
+                // Danger collision
+                for (const danger of dangers) {
+                    if (Math.hypot(player.x - danger.x, player.y - danger.y) < danger.radius + player.radius) {
+                        loseLife('Tehlikeye yakalandın!');
+                        return;
+                    }
+                }
+
+                // Out of bounds
+                if (player.x < -50 || player.x > canvas.width + 50 ||
+                    player.y < -50 || player.y > canvas.height + 50) {
+                    loseLife('Uzaya savruldun!');
+                    return;
+                }
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function loseLife(message) {
+            lives--;
+            updateUI();
+
+            if (lives <= 0) {
+                gameState = 'lost';
+                document.getElementById('loseMessage').textContent = message + ' Oyun bitti!';
+                document.getElementById('loseOverlay').classList.remove('hidden');
+            } else {
+                gameState = 'lost';
+                document.getElementById('loseMessage').textContent = message;
+                document.getElementById('loseOverlay').classList.remove('hidden');
+            }
+        }
+
+        // Input Handling
+        function getInputPos(e) {
+            if (e.touches) {
+                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+            return { x: e.clientX, y: e.clientY };
+        }
+
+        canvas.addEventListener('mousedown', startAim);
+        canvas.addEventListener('touchstart', startAim);
+        canvas.addEventListener('mousemove', updateAim);
+        canvas.addEventListener('touchmove', updateAim);
+        canvas.addEventListener('mouseup', endAim);
+        canvas.addEventListener('touchend', endAim);
+
+        function startAim(e) {
+            if (gameState !== 'waiting') return;
+            e.preventDefault();
+
+            const pos = getInputPos(e);
+            aimStart = pos;
+            aimEnd = pos;
+            isDragging = true;
+            gameState = 'aiming';
+        }
+
+        function updateAim(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            aimEnd = getInputPos(e);
+        }
+
+        function endAim(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            isDragging = false;
+
+            if (gameState === 'aiming' && aimStart && aimEnd) {
+                const dx = aimStart.x - aimEnd.x;
+                const dy = aimStart.y - aimEnd.y;
+                const power = Math.min(Math.hypot(dx, dy), 200) * 3;
+                const angle = Math.atan2(dy, dx);
+
+                player.vx = Math.cos(angle) * power;
+                player.vy = Math.sin(angle) * power;
+                gameState = 'flying';
+            }
+
+            aimStart = null;
+            aimEnd = null;
+        }
+
+        // UI Functions
+        function updateUI() {
+            document.getElementById('scoreValue').textContent = score;
+            document.getElementById('levelValue').textContent = level;
+            document.getElementById('livesValue').textContent = lives;
+            document.getElementById('levelText').textContent = level;
+        }
+
+        function startGame() {
+            document.getElementById('instructions').classList.add('hidden');
+            generateLevel(1);
+            requestAnimationFrame(gameLoop);
+        }
+
+        function launchPlayer() {
+            if (gameState === 'waiting') {
+                // Quick launch with default velocity
+                player.vx = 300;
+                player.vy = -50;
+                gameState = 'flying';
+            }
+        }
+
+        function resetLevel() {
+            document.getElementById('winOverlay').classList.add('hidden');
+            document.getElementById('loseOverlay').classList.add('hidden');
+
+            if (lives <= 0) {
+                // Full reset
+                score = 0;
+                level = 1;
+                lives = 3;
+            }
+
+            generateLevel(level);
+        }
+
+        function nextLevel() {
+            document.getElementById('winOverlay').classList.add('hidden');
+            level++;
+            lives = Math.min(lives + 1, 5); // Bonus life
+            generateLevel(level);
+        }
+
+        // Prevent scrolling on mobile
+        document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
     </script>
 </body>
+
 </html>
