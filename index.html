@@ -731,8 +731,13 @@
 
         // Draw Stars Background
         let starPositions = [];
+        let ozgulTexts = [];
+
         function initStars() {
             starPositions = [];
+            ozgulTexts = [];
+
+            // Yıldızlar
             for (let i = 0; i < 300; i++) {
                 starPositions.push({
                     x: Math.random() * canvas.width,
@@ -743,10 +748,26 @@
                     phase: Math.random() * Math.PI * 2
                 });
             }
+
+            // Özgül yazıları
+            for (let i = 0; i < 20; i++) {
+                ozgulTexts.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 20 + 12,
+                    baseAlpha: Math.random() * 0.15 + 0.05,
+                    speed: Math.random() * 0.3 + 0.1,
+                    rotation: Math.random() * 0.4 - 0.2,
+                    twinkleSpeed: Math.random() * 2 + 0.5,
+                    phase: Math.random() * Math.PI * 2
+                });
+            }
         }
 
         function drawStars() {
             const time = Date.now() / 1000;
+
+            // Yıldızları çiz
             for (const star of starPositions) {
                 const twinkle = Math.sin(time * star.twinkleSpeed + star.phase) * 0.3 + 0.7;
                 const alpha = star.baseAlpha * twinkle;
@@ -755,6 +776,28 @@
                 ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
                 ctx.fill();
+            }
+
+            // Özgül yazılarını çiz
+            for (const text of ozgulTexts) {
+                const twinkle = Math.sin(time * text.twinkleSpeed + text.phase) * 0.3 + 0.7;
+                const alpha = text.baseAlpha * twinkle;
+
+                // Yavaşça hareket et
+                text.y -= text.speed;
+                if (text.y < -50) {
+                    text.y = canvas.height + 50;
+                    text.x = Math.random() * canvas.width;
+                }
+
+                ctx.save();
+                ctx.translate(text.x, text.y);
+                ctx.rotate(text.rotation);
+                ctx.font = `${text.size}px Inter, sans-serif`;
+                ctx.fillStyle = `rgba(236, 72, 153, ${alpha})`;
+                ctx.textAlign = 'center';
+                ctx.fillText('Özgül', 0, 0);
+                ctx.restore();
             }
         }
 
