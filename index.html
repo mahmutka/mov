@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>🚀 Yerçekimi Uzay Oyunu | MOV</title>
+    <title>💧 Sıvı Simülasyonu | MOV</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -14,10 +14,9 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --secondary: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
+            --primary: #06b6d4;
+            --secondary: #3b82f6;
+            --accent: #8b5cf6;
             --bg-dark: #0a0a12;
             --bg-card: rgba(255, 255, 255, 0.05);
             --text-primary: #ffffff;
@@ -77,8 +76,8 @@
             letter-spacing: 1px;
         }
 
-        /* Game Container */
-        #gameContainer {
+        /* Canvas Container */
+        #canvasContainer {
             flex: 1;
             position: relative;
             overflow: hidden;
@@ -99,6 +98,9 @@
             display: flex;
             gap: 1rem;
             z-index: 100;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0 1rem;
         }
 
         .btn {
@@ -117,12 +119,12 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 5px 20px rgba(6, 182, 212, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.4);
         }
 
         .btn-secondary {
@@ -135,142 +137,98 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Instructions */
-        .instructions {
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: white;
+        }
+
+        /* Settings Panel */
+        .settings {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 5rem;
+            right: 1rem;
             background: rgba(10, 10, 18, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 2.5rem;
-            text-align: center;
-            max-width: 400px;
-            z-index: 200;
-            animation: fadeIn 0.5s ease;
+            border-radius: 16px;
+            padding: 1.5rem;
+            z-index: 100;
+            min-width: 250px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
-        .instructions.hidden {
-            display: none;
+        .settings.hidden {
+            transform: translateX(calc(100% + 2rem));
+            opacity: 0;
+            pointer-events: none;
         }
 
-        .instructions h2 {
-            font-size: 1.8rem;
+        .settings h3 {
+            font-size: 1rem;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary);
         }
 
-        .instructions p {
+        .setting-item {
+            margin-bottom: 1rem;
+        }
+
+        .setting-item label {
+            display: block;
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .instructions ul {
-            text-align: left;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            padding-left: 1.5rem;
-        }
-
-        .instructions li {
             margin-bottom: 0.5rem;
         }
 
-        .instructions li strong {
-            color: var(--text-primary);
-        }
-
-        /* Win/Lose Overlay */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .setting-item input[type="range"] {
             width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 18, 0.9);
-            backdrop-filter: blur(10px);
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .setting-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            cursor: pointer;
+        }
+
+        .color-buttons {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 300;
-            animation: fadeIn 0.5s ease;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
-        .overlay.hidden {
-            display: none;
+        .color-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .overlay h1 {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+        .color-btn:hover,
+        .color-btn.active {
+            transform: scale(1.2);
+            border-color: white;
         }
 
-        .overlay.win h1 {
-            background: linear-gradient(135deg, var(--success), #34d399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .overlay.lose h1 {
-            background: linear-gradient(135deg, #ef4444, #f87171);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .overlay p {
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Level indicator */
-        .level-indicator {
-            position: fixed;
-            top: 5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            z-index: 50;
-        }
-
-        .level-indicator span {
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* Mobile touch indicator */
-        .touch-hint {
+        /* Instructions */
+        .hint {
             position: fixed;
             bottom: 6rem;
             left: 50%;
             transform: translateX(-50%);
             color: var(--text-secondary);
-            font-size: 0.8rem;
-            opacity: 0.7;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-align: center;
         }
 
         @media (max-width: 600px) {
@@ -282,14 +240,14 @@
                 font-size: 1.2rem;
             }
 
-            .instructions {
-                margin: 1rem;
-                max-width: calc(100% - 2rem);
+            .settings {
+                left: 1rem;
+                right: 1rem;
+                min-width: auto;
             }
 
             .controls {
-                flex-wrap: wrap;
-                justify-content: center;
+                bottom: 1rem;
             }
         }
     </style>
@@ -297,66 +255,77 @@
 
 <body>
     <header>
-        <div class="logo">🌍 MOV</div>
+        <div class="logo">💧 Sıvı Simülasyonu</div>
         <div class="stats">
             <div class="stat">
-                <div class="stat-value" id="scoreValue">0</div>
-                <div class="stat-label">Skor</div>
+                <div class="stat-value" id="particleCount">0</div>
+                <div class="stat-label">Parçacık</div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="levelValue">1</div>
-                <div class="stat-label">Seviye</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" id="livesValue">3</div>
-                <div class="stat-label">Can</div>
+                <div class="stat-value" id="fpsValue">60</div>
+                <div class="stat-label">FPS</div>
             </div>
         </div>
     </header>
 
-    <div class="level-indicator">Seviye <span id="levelText">1</span> - Hedefe ulaş!</div>
-
-    <div id="gameContainer">
-        <canvas id="gameCanvas"></canvas>
+    <div id="canvasContainer">
+        <canvas id="fluidCanvas"></canvas>
     </div>
 
-    <div class="touch-hint">Tıkla/Dokun ve sürükle</div>
+    <div class="hint">Ekrana tıklayarak veya sürükleyerek sıvı ekleyin</div>
 
     <div class="controls">
-        <button class="btn btn-secondary" onclick="resetLevel()">🔄 Yeniden</button>
-        <button class="btn btn-primary" onclick="launchPlayer()">🚀 Fırlat</button>
+        <button class="btn btn-secondary" onclick="toggleSettings()">⚙️ Ayarlar</button>
+        <button class="btn btn-primary" onclick="addParticles()">💧 Sıvı Ekle</button>
+        <button class="btn btn-danger" onclick="clearParticles()">🗑️ Temizle</button>
+        <button class="btn btn-secondary" onclick="toggleGravity()">🌍 Yerçekimi</button>
     </div>
 
-    <!-- Instructions Modal -->
-    <div class="instructions" id="instructions">
-        <h2>🌌 Yerçekimi Oyunu</h2>
-        <p>Gezegenler arasında gezinerek hedefe ulaş!</p>
-        <ul>
-            <li><strong>Sürükle ve bırak</strong> ile topun yönünü ve gücünü ayarla</li>
-            <li><strong>Yeşil hedef</strong>e ulaşmaya çalış</li>
-            <li><strong>Gezegenler</strong> seni çeker - dikkatli ol!</li>
-            <li><strong>Kırmızı tehlikeler</strong>den uzak dur</li>
-        </ul>
-        <button class="btn btn-primary" onclick="startGame()">🎮 Oyuna Başla</button>
-    </div>
+    <!-- Settings Panel -->
+    <div class="settings hidden" id="settingsPanel">
+        <h3>⚙️ Simülasyon Ayarları</h3>
 
-    <!-- Win Overlay -->
-    <div class="overlay win hidden" id="winOverlay">
-        <h1>🎉 Kazandın!</h1>
-        <p>Harika! Bir sonraki seviyeye geç</p>
-        <button class="btn btn-primary" onclick="nextLevel()">➡️ Sonraki Seviye</button>
-    </div>
+        <div class="setting-item">
+            <label>Yerçekimi Gücü: <span id="gravityValue">0.5</span></label>
+            <input type="range" id="gravitySlider" min="0" max="2" step="0.1" value="0.5" oninput="updateGravity()">
+        </div>
 
-    <!-- Lose Overlay -->
-    <div class="overlay lose hidden" id="loseOverlay">
-        <h1>💥 Kaybettin!</h1>
-        <p id="loseMessage">Tekrar dene!</p>
-        <button class="btn btn-primary" onclick="resetLevel()">🔄 Tekrar Dene</button>
+        <div class="setting-item">
+            <label>Parçacık Boyutu: <span id="sizeValue">8</span></label>
+            <input type="range" id="sizeSlider" min="3" max="20" step="1" value="8" oninput="updateSize()">
+        </div>
+
+        <div class="setting-item">
+            <label>Viskozite: <span id="viscosityValue">0.98</span></label>
+            <input type="range" id="viscositySlider" min="0.9" max="1" step="0.01" value="0.98"
+                oninput="updateViscosity()">
+        </div>
+
+        <div class="setting-item">
+            <label>Yüzey Gerilimi: <span id="tensionValue">0.5</span></label>
+            <input type="range" id="tensionSlider" min="0" max="1" step="0.1" value="0.5" oninput="updateTension()">
+        </div>
+
+        <div class="setting-item">
+            <label>Renk Seçimi</label>
+            <div class="color-buttons">
+                <button class="color-btn active" style="background: linear-gradient(135deg, #06b6d4, #3b82f6)"
+                    onclick="setColor(0)"></button>
+                <button class="color-btn" style="background: linear-gradient(135deg, #8b5cf6, #ec4899)"
+                    onclick="setColor(1)"></button>
+                <button class="color-btn" style="background: linear-gradient(135deg, #10b981, #84cc16)"
+                    onclick="setColor(2)"></button>
+                <button class="color-btn" style="background: linear-gradient(135deg, #f59e0b, #ef4444)"
+                    onclick="setColor(3)"></button>
+                <button class="color-btn" style="background: linear-gradient(135deg, #ffffff, #94a3b8)"
+                    onclick="setColor(4)"></button>
+            </div>
+        </div>
     </div>
 
     <script>
         // Canvas Setup
-        const canvas = document.getElementById('gameCanvas');
+        const canvas = document.getElementById('fluidCanvas');
         const ctx = canvas.getContext('2d');
 
         function resizeCanvas() {
@@ -366,625 +335,402 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Game State
-        let gameState = 'waiting'; // waiting, aiming, flying, won, lost
-        let score = 0;
-        let level = 1;
-        let lives = 3;
+        // Particle System
+        const particles = [];
+        const MAX_PARTICLES = 2000;
 
-        // Physics Constants
-        const G = 800; // Gravitational constant
-        const TRAIL_LENGTH = 50;
+        // Physics Settings
+        let gravity = 0.5;
+        let particleRadius = 8;
+        let viscosity = 0.98;
+        let surfaceTension = 0.5;
+        let gravityEnabled = true;
 
-        // Game Objects
-        let player = null;
-        let planets = [];
-        let target = null;
-        let dangers = [];
-        let trail = [];
+        // Color Palettes
+        const colorPalettes = [
+            { start: '#06b6d4', end: '#3b82f6' },   // Cyan-Blue
+            { start: '#8b5cf6', end: '#ec4899' },   // Purple-Pink
+            { start: '#10b981', end: '#84cc16' },   // Green-Lime
+            { start: '#f59e0b', end: '#ef4444' },   // Orange-Red
+            { start: '#ffffff', end: '#94a3b8' }    // White-Gray
+        ];
+        let currentPalette = 0;
 
-        // Aiming
-        let aimStart = null;
-        let aimEnd = null;
-        let isDragging = false;
+        // Mouse State
+        let mouse = { x: 0, y: 0, isDown: false };
+        let lastMouse = { x: 0, y: 0 };
 
-        // Player Class
-        class Ball {
-            constructor(x, y, radius, color) {
+        // FPS Counter
+        let fps = 60;
+        let frameCount = 0;
+        let lastFpsTime = performance.now();
+
+        // Particle Class
+        class Particle {
+            constructor(x, y, vx = 0, vy = 0) {
                 this.x = x;
                 this.y = y;
-                this.vx = 0;
-                this.vy = 0;
-                this.radius = radius;
-                this.color = color;
+                this.vx = vx + (Math.random() - 0.5) * 2;
+                this.vy = vy + (Math.random() - 0.5) * 2;
+                this.radius = particleRadius + Math.random() * 2 - 1;
+                this.life = 1;
+                this.palette = currentPalette;
+                this.hueOffset = Math.random() * 30 - 15;
+            }
+
+            update() {
+                // Apply gravity
+                if (gravityEnabled) {
+                    this.vy += gravity;
+                }
+
+                // Apply viscosity (damping)
+                this.vx *= viscosity;
+                this.vy *= viscosity;
+
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Boundary collision
+                const bounce = 0.6;
+
+                if (this.x < this.radius) {
+                    this.x = this.radius;
+                    this.vx *= -bounce;
+                }
+                if (this.x > canvas.width - this.radius) {
+                    this.x = canvas.width - this.radius;
+                    this.vx *= -bounce;
+                }
+                if (this.y < this.radius) {
+                    this.y = this.radius;
+                    this.vy *= -bounce;
+                }
+                if (this.y > canvas.height - this.radius) {
+                    this.y = canvas.height - this.radius;
+                    this.vy *= -bounce;
+                }
             }
 
             draw() {
-                // Glow effect
+                const palette = colorPalettes[this.palette];
+
+                // Create gradient for 3D effect
                 const gradient = ctx.createRadialGradient(
-                    this.x, this.y, 0,
-                    this.x, this.y, this.radius * 2
-                );
-                gradient.addColorStop(0, this.color);
-                gradient.addColorStop(0.5, this.color + '80');
-                gradient.addColorStop(1, 'transparent');
-
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 2, 0, Math.PI * 2);
-                ctx.fillStyle = gradient;
-                ctx.fill();
-
-                // Main ball
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-
-                // Highlight
-                ctx.beginPath();
-                ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.3, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                ctx.fill();
-            }
-
-            update(dt) {
-                // Apply gravity from all planets
-                for (const planet of planets) {
-                    const dx = planet.x - this.x;
-                    const dy = planet.y - this.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist > planet.radius + this.radius) {
-                        const force = (G * planet.mass) / (dist * dist);
-                        this.vx += (dx / dist) * force * dt;
-                        this.vy += (dy / dist) * force * dt;
-                    }
-                }
-
-                this.x += this.vx * dt;
-                this.y += this.vy * dt;
-
-                // Add to trail
-                trail.push({ x: this.x, y: this.y });
-                if (trail.length > TRAIL_LENGTH) {
-                    trail.shift();
-                }
-            }
-        }
-
-        // Planet Class
-        class Planet {
-            constructor(x, y, radius, mass, color) {
-                this.x = x;
-                this.y = y;
-                this.radius = radius;
-                this.mass = mass;
-                this.color = color;
-                this.rotation = 0;
-            }
-
-            draw() {
-                this.rotation += 0.01;
-
-                // Gravity field visualization
-                const gradient = ctx.createRadialGradient(
-                    this.x, this.y, this.radius,
-                    this.x, this.y, this.radius * 3
-                );
-                gradient.addColorStop(0, this.color + '40');
-                gradient.addColorStop(1, 'transparent');
-
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 3, 0, Math.PI * 2);
-                ctx.fillStyle = gradient;
-                ctx.fill();
-
-                // Planet body
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                const bodyGradient = ctx.createRadialGradient(
                     this.x - this.radius * 0.3, this.y - this.radius * 0.3, 0,
                     this.x, this.y, this.radius
                 );
-                bodyGradient.addColorStop(0, this.color);
-                bodyGradient.addColorStop(1, this.darkenColor(this.color, 40));
-                ctx.fillStyle = bodyGradient;
-                ctx.fill();
 
-                // Surface details
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
-                for (let i = 0; i < 3; i++) {
-                    ctx.beginPath();
-                    const angle = (i * Math.PI * 2) / 3;
-                    const craterX = Math.cos(angle) * this.radius * 0.5;
-                    const craterY = Math.sin(angle) * this.radius * 0.5;
-                    ctx.arc(craterX, craterY, this.radius * 0.15, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-                    ctx.fill();
-                }
-                ctx.restore();
-            }
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+                gradient.addColorStop(0.3, palette.start);
+                gradient.addColorStop(1, palette.end);
 
-            darkenColor(color, percent) {
-                const num = parseInt(color.replace('#', ''), 16);
-                const amt = Math.round(2.55 * percent);
-                const R = Math.max((num >> 16) - amt, 0);
-                const G = Math.max((num >> 8 & 0x00FF) - amt, 0);
-                const B = Math.max((num & 0x0000FF) - amt, 0);
-                return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
-            }
-        }
-
-        // Target Class
-        class Target {
-            constructor(x, y, radius) {
-                this.x = x;
-                this.y = y;
-                this.radius = radius;
-                this.pulsePhase = 0;
-            }
-
-            draw() {
-                this.pulsePhase += 0.05;
-                const pulse = 1 + Math.sin(this.pulsePhase) * 0.2;
-
-                // Outer glow
-                const gradient = ctx.createRadialGradient(
-                    this.x, this.y, 0,
-                    this.x, this.y, this.radius * 2 * pulse
-                );
-                gradient.addColorStop(0, '#10b981');
-                gradient.addColorStop(0.5, '#10b98140');
-                gradient.addColorStop(1, 'transparent');
-
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 2 * pulse, 0, Math.PI * 2);
-                ctx.fillStyle = gradient;
-                ctx.fill();
-
-                // Target ring
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = '#10b981';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                // Inner circle
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 0.5, 0, Math.PI * 2);
-                ctx.fillStyle = '#10b981';
-                ctx.fill();
-
-                // Star icon
-                ctx.fillStyle = '#fff';
-                ctx.font = `${this.radius}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('★', this.x, this.y);
-            }
-        }
-
-        // Danger Class
-        class Danger {
-            constructor(x, y, radius) {
-                this.x = x;
-                this.y = y;
-                this.radius = radius;
-                this.rotation = 0;
-            }
-
-            draw() {
-                this.rotation += 0.02;
-
-                // Warning glow
-                const gradient = ctx.createRadialGradient(
-                    this.x, this.y, 0,
-                    this.x, this.y, this.radius * 1.5
-                );
-                gradient.addColorStop(0, '#ef444480');
-                gradient.addColorStop(1, 'transparent');
-
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 1.5, 0, Math.PI * 2);
                 ctx.fillStyle = gradient;
                 ctx.fill();
 
-                // Spiky danger
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
-
+                // Glow effect
                 ctx.beginPath();
-                const spikes = 8;
-                for (let i = 0; i < spikes * 2; i++) {
-                    const r = i % 2 === 0 ? this.radius : this.radius * 0.5;
-                    const angle = (i * Math.PI) / spikes;
-                    if (i === 0) {
-                        ctx.moveTo(r * Math.cos(angle), r * Math.sin(angle));
-                    } else {
-                        ctx.lineTo(r * Math.cos(angle), r * Math.sin(angle));
+                ctx.arc(this.x, this.y, this.radius * 1.5, 0, Math.PI * 2);
+                const glowGradient = ctx.createRadialGradient(
+                    this.x, this.y, this.radius * 0.5,
+                    this.x, this.y, this.radius * 1.5
+                );
+                glowGradient.addColorStop(0, palette.start + '40');
+                glowGradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = glowGradient;
+                ctx.fill();
+            }
+        }
+
+        // Particle Interactions
+        function applyParticleInteractions() {
+            const interactionRadius = particleRadius * 4;
+            const tensionForce = surfaceTension * 0.1;
+
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[j].x - particles[i].x;
+                    const dy = particles[j].y - particles[i].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < interactionRadius && dist > 0) {
+                        // Repulsion when too close
+                        const minDist = (particles[i].radius + particles[j].radius) * 0.8;
+                        if (dist < minDist) {
+                            const force = (minDist - dist) / minDist * 2;
+                            const fx = (dx / dist) * force;
+                            const fy = (dy / dist) * force;
+
+                            particles[i].vx -= fx;
+                            particles[i].vy -= fy;
+                            particles[j].vx += fx;
+                            particles[j].vy += fy;
+                        }
+
+                        // Surface tension - cohesion at medium distance
+                        if (dist > minDist && dist < interactionRadius) {
+                            const force = tensionForce * (1 - dist / interactionRadius);
+                            const fx = (dx / dist) * force;
+                            const fy = (dy / dist) * force;
+
+                            particles[i].vx += fx;
+                            particles[i].vy += fy;
+                            particles[j].vx -= fx;
+                            particles[j].vy -= fy;
+                        }
                     }
                 }
-                ctx.closePath();
-                ctx.fillStyle = '#ef4444';
-                ctx.fill();
-                ctx.restore();
             }
         }
 
-        // Level Generation
-        function generateLevel(lvl) {
-            const w = canvas.width;
-            const h = canvas.height;
-
-            // Player start position
-            player = new Ball(100, h / 2, 15, '#6366f1');
-            trail = [];
-
-            // Clear arrays
-            planets = [];
-            dangers = [];
-
-            // Target position (right side)
-            target = new Target(w - 100, h / 2, 30);
-
-            // Add planets based on level
-            const planetCount = Math.min(lvl + 1, 5);
-            const planetColors = ['#f59e0b', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16'];
-
-            for (let i = 0; i < planetCount; i++) {
-                const x = 200 + (w - 400) * (i + 0.5) / planetCount + (Math.random() - 0.5) * 100;
-                const y = h / 2 + (Math.random() - 0.5) * (h - 200);
-                const radius = 30 + Math.random() * 30;
-                const mass = radius * 2;
-                planets.push(new Planet(x, y, radius, mass, planetColors[i % planetColors.length]));
-            }
-
-            // Add dangers for higher levels
-            if (lvl >= 2) {
-                const dangerCount = Math.min(lvl - 1, 3);
-                for (let i = 0; i < dangerCount; i++) {
-                    let x, y, valid;
-                    do {
-                        x = 200 + Math.random() * (w - 400);
-                        y = 100 + Math.random() * (h - 200);
-                        valid = true;
-
-                        // Check distance from planets and target
-                        for (const p of planets) {
-                            if (Math.hypot(x - p.x, y - p.y) < p.radius + 80) valid = false;
-                        }
-                        if (Math.hypot(x - target.x, y - target.y) < 100) valid = false;
-                        if (Math.hypot(x - 100, y - h / 2) < 100) valid = false;
-                    } while (!valid);
-
-                    dangers.push(new Danger(x, y, 20));
+        // Add particles
+        function spawnParticles(x, y, count = 5, vx = 0, vy = 0) {
+            for (let i = 0; i < count; i++) {
+                if (particles.length < MAX_PARTICLES) {
+                    const offsetX = (Math.random() - 0.5) * 20;
+                    const offsetY = (Math.random() - 0.5) * 20;
+                    particles.push(new Particle(x + offsetX, y + offsetY, vx, vy));
                 }
             }
-
-            gameState = 'waiting';
-            updateUI();
+            updateParticleCount();
         }
 
-        // Draw Trail
-        function drawTrail() {
-            if (trail.length < 2) return;
-
-            ctx.beginPath();
-            ctx.moveTo(trail[0].x, trail[0].y);
-
-            for (let i = 1; i < trail.length; i++) {
-                ctx.lineTo(trail[i].x, trail[i].y);
-            }
-
-            ctx.strokeStyle = 'rgba(99, 102, 241, 0.5)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+        function addParticles() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 3;
+            spawnParticles(centerX, centerY, 50, 0, 0);
         }
 
-        // Draw Aim Line
-        function drawAimLine() {
-            if (!isDragging || !aimStart || !aimEnd) return;
-
-            const dx = aimStart.x - aimEnd.x;
-            const dy = aimStart.y - aimEnd.y;
-            const power = Math.min(Math.hypot(dx, dy), 200);
-
-            // Power indicator
-            ctx.beginPath();
-            ctx.moveTo(player.x, player.y);
-            ctx.lineTo(player.x + dx, player.y + dy);
-
-            const gradient = ctx.createLinearGradient(player.x, player.y, player.x + dx, player.y + dy);
-            gradient.addColorStop(0, '#6366f1');
-            gradient.addColorStop(1, '#ec4899');
-
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
-            ctx.stroke();
-
-            // Arrow head
-            const angle = Math.atan2(dy, dx);
-            const arrowSize = 15;
-            ctx.beginPath();
-            ctx.moveTo(player.x + dx, player.y + dy);
-            ctx.lineTo(
-                player.x + dx - arrowSize * Math.cos(angle - 0.4),
-                player.y + dy - arrowSize * Math.sin(angle - 0.4)
-            );
-            ctx.moveTo(player.x + dx, player.y + dy);
-            ctx.lineTo(
-                player.x + dx - arrowSize * Math.cos(angle + 0.4),
-                player.y + dy - arrowSize * Math.sin(angle + 0.4)
-            );
-            ctx.stroke();
-
-            // Power text
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 14px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText(`Güç: ${Math.round(power)}%`, player.x + dx / 2, player.y + dy / 2 - 20);
+        function clearParticles() {
+            particles.length = 0;
+            updateParticleCount();
         }
 
-        // Draw Stars Background
-        let starPositions = [];
-        let ozgulTexts = [];
-
-        function initStars() {
-            starPositions = [];
-            ozgulTexts = [];
-
-            // Yıldızlar
-            for (let i = 0; i < 300; i++) {
-                starPositions.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 2 + 0.5,
-                    baseAlpha: Math.random() * 0.5 + 0.3,
-                    twinkleSpeed: Math.random() * 3 + 1,
-                    phase: Math.random() * Math.PI * 2
-                });
-            }
-
-            // Özgül yazıları
-            for (let i = 0; i < 20; i++) {
-                ozgulTexts.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 20 + 12,
-                    baseAlpha: Math.random() * 0.15 + 0.05,
-                    speed: Math.random() * 0.3 + 0.1,
-                    rotation: Math.random() * 0.4 - 0.2,
-                    twinkleSpeed: Math.random() * 2 + 0.5,
-                    phase: Math.random() * Math.PI * 2
-                });
-            }
-        }
-
-        function drawStars() {
-            const time = Date.now() / 1000;
-
-            // Yıldızları çiz
-            for (const star of starPositions) {
-                const twinkle = Math.sin(time * star.twinkleSpeed + star.phase) * 0.3 + 0.7;
-                const alpha = star.baseAlpha * twinkle;
-
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-                ctx.fill();
-            }
-
-            // Özgül yazılarını çiz
-            for (const text of ozgulTexts) {
-                const twinkle = Math.sin(time * text.twinkleSpeed + text.phase) * 0.3 + 0.7;
-                const alpha = text.baseAlpha * twinkle;
-
-                // Yavaşça hareket et
-                text.y -= text.speed;
-                if (text.y < -50) {
-                    text.y = canvas.height + 50;
-                    text.x = Math.random() * canvas.width;
-                }
-
-                ctx.save();
-                ctx.translate(text.x, text.y);
-                ctx.rotate(text.rotation);
-                ctx.font = `${text.size}px Inter, sans-serif`;
-                ctx.fillStyle = `rgba(236, 72, 153, ${alpha})`;
-                ctx.textAlign = 'center';
-                ctx.fillText('Özgül', 0, 0);
-                ctx.restore();
-            }
-        }
-
-        // Game Loop
-        let lastTime = 0;
-        function gameLoop(currentTime) {
-            const dt = Math.min((currentTime - lastTime) / 1000, 0.05);
-            lastTime = currentTime;
-
-            // Clear canvas
-            ctx.fillStyle = '#0a0a12';
+        // Draw background
+        function drawBackground() {
+            // Gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0a0a12');
+            gradient.addColorStop(0.5, '#0f0f1a');
+            gradient.addColorStop(1, '#1a1a2e');
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw background
-            drawStars();
+            // Subtle grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            const gridSize = 50;
 
-            // Draw game objects
-            for (const planet of planets) planet.draw();
-            for (const danger of dangers) danger.draw();
-            target.draw();
-            drawTrail();
-            player.draw();
-            drawAimLine();
-
-            // Update physics if flying
-            if (gameState === 'flying') {
-                player.update(dt);
-
-                // Check collisions
-                // Win condition
-                if (Math.hypot(player.x - target.x, player.y - target.y) < target.radius + player.radius) {
-                    gameState = 'won';
-                    score += level * 100;
-                    updateUI();
-                    document.getElementById('winOverlay').classList.remove('hidden');
-                }
-
-                // Planet collision
-                for (const planet of planets) {
-                    if (Math.hypot(player.x - planet.x, player.y - planet.y) < planet.radius + player.radius) {
-                        loseLife('Gezegene çarptın!');
-                        return;
-                    }
-                }
-
-                // Danger collision
-                for (const danger of dangers) {
-                    if (Math.hypot(player.x - danger.x, player.y - danger.y) < danger.radius + player.radius) {
-                        loseLife('Tehlikeye yakalandın!');
-                        return;
-                    }
-                }
-
-                // Out of bounds
-                if (player.x < -50 || player.x > canvas.width + 50 ||
-                    player.y < -50 || player.y > canvas.height + 50) {
-                    loseLife('Uzaya savruldun!');
-                    return;
-                }
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
             }
-
-            requestAnimationFrame(gameLoop);
-        }
-
-        function loseLife(message) {
-            lives--;
-            updateUI();
-
-            if (lives <= 0) {
-                gameState = 'lost';
-                document.getElementById('loseMessage').textContent = message + ' Oyun bitti!';
-                document.getElementById('loseOverlay').classList.remove('hidden');
-            } else {
-                gameState = 'lost';
-                document.getElementById('loseMessage').textContent = message;
-                document.getElementById('loseOverlay').classList.remove('hidden');
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
             }
         }
 
-        // Input Handling
-        function getInputPos(e) {
-            if (e.touches) {
-                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            }
-            return { x: e.clientX, y: e.clientY };
-        }
+        // Draw metaball effect
+        function drawMetaballs() {
+            if (particles.length === 0) return;
 
-        canvas.addEventListener('mousedown', startAim);
-        canvas.addEventListener('touchstart', startAim);
-        canvas.addEventListener('mousemove', updateAim);
-        canvas.addEventListener('touchmove', updateAim);
-        canvas.addEventListener('mouseup', endAim);
-        canvas.addEventListener('touchend', endAim);
+            // Create temporary canvas for metaball effect
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
 
-        function startAim(e) {
-            if (gameState !== 'waiting') return;
-            e.preventDefault();
+            // Draw particles as circles with gradient
+            for (const particle of particles) {
+                const gradient = tempCtx.createRadialGradient(
+                    particle.x, particle.y, 0,
+                    particle.x, particle.y, particle.radius * 2
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+                gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.5)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
-            const pos = getInputPos(e);
-            aimStart = pos;
-            aimEnd = pos;
-            isDragging = true;
-            gameState = 'aiming';
-        }
-
-        function updateAim(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            aimEnd = getInputPos(e);
-        }
-
-        function endAim(e) {
-            if (!isDragging) return;
-            e.preventDefault();
-            isDragging = false;
-
-            if (gameState === 'aiming' && aimStart && aimEnd) {
-                const dx = aimStart.x - aimEnd.x;
-                const dy = aimStart.y - aimEnd.y;
-                const power = Math.min(Math.hypot(dx, dy), 200) * 3;
-                const angle = Math.atan2(dy, dx);
-
-                player.vx = Math.cos(angle) * power;
-                player.vy = Math.sin(angle) * power;
-                gameState = 'flying';
+                tempCtx.beginPath();
+                tempCtx.arc(particle.x, particle.y, particle.radius * 2, 0, Math.PI * 2);
+                tempCtx.fillStyle = gradient;
+                tempCtx.fill();
             }
 
-            aimStart = null;
-            aimEnd = null;
+            // Apply threshold to create metaball effect
+            const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const data = imageData.data;
+            const threshold = 200;
+
+            for (let i = 0; i < data.length; i += 4) {
+                if (data[i] > threshold) {
+                    data[i] = 255;     // R
+                    data[i + 1] = 255; // G
+                    data[i + 2] = 255; // B
+                    data[i + 3] = 200; // A
+                } else {
+                    data[i + 3] = 0;
+                }
+            }
+
+            tempCtx.putImageData(imageData, 0, 0);
+
+            // Draw colored metaballs on main canvas
+            ctx.globalCompositeOperation = 'lighter';
+            ctx.drawImage(tempCanvas, 0, 0);
+            ctx.globalCompositeOperation = 'source-over';
         }
 
-        // UI Functions
-        function updateUI() {
-            document.getElementById('scoreValue').textContent = score;
-            document.getElementById('levelValue').textContent = level;
-            document.getElementById('livesValue').textContent = lives;
-            document.getElementById('levelText').textContent = level;
+        // Main animation loop
+        function animate() {
+            drawBackground();
+
+            // Apply interactions
+            if (particles.length > 0 && particles.length < 500) {
+                applyParticleInteractions();
+            }
+
+            // Update and draw particles
+            for (const particle of particles) {
+                particle.update();
+                particle.draw();
+            }
+
+            // Draw metaball effect (optional - for performance can be disabled)
+            // drawMetaballs();
+
+            // FPS counter
+            frameCount++;
+            const now = performance.now();
+            if (now - lastFpsTime >= 1000) {
+                fps = frameCount;
+                frameCount = 0;
+                lastFpsTime = now;
+                document.getElementById('fpsValue').textContent = fps;
+            }
+
+            requestAnimationFrame(animate);
         }
 
-        function startGame() {
-            document.getElementById('instructions').classList.add('hidden');
-            initStars();
-            generateLevel(1);
-            requestAnimationFrame(gameLoop);
-        }
-
-        // Initialize stars on load and handle resize
-        window.addEventListener('resize', () => {
-            resizeCanvas();
-            initStars();
+        // Mouse Events
+        canvas.addEventListener('mousedown', (e) => {
+            mouse.isDown = true;
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            lastMouse.x = e.clientX;
+            lastMouse.y = e.clientY;
         });
 
-        // Pre-initialize stars so background shows immediately
-        initStars();
+        canvas.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
 
-        function launchPlayer() {
-            if (gameState === 'waiting') {
-                // Quick launch with default velocity
-                player.vx = 300;
-                player.vy = -50;
-                gameState = 'flying';
+            if (mouse.isDown) {
+                const vx = (mouse.x - lastMouse.x) * 0.5;
+                const vy = (mouse.y - lastMouse.y) * 0.5;
+                spawnParticles(mouse.x, mouse.y, 3, vx, vy);
+                lastMouse.x = mouse.x;
+                lastMouse.y = mouse.y;
             }
-        }
+        });
 
-        function resetLevel() {
-            document.getElementById('winOverlay').classList.add('hidden');
-            document.getElementById('loseOverlay').classList.add('hidden');
+        canvas.addEventListener('mouseup', () => {
+            mouse.isDown = false;
+        });
 
-            if (lives <= 0) {
-                // Full reset
-                score = 0;
-                level = 1;
-                lives = 3;
+        canvas.addEventListener('mouseleave', () => {
+            mouse.isDown = false;
+        });
+
+        // Touch Events
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            mouse.isDown = true;
+            mouse.x = touch.clientX;
+            mouse.y = touch.clientY;
+            lastMouse.x = touch.clientX;
+            lastMouse.y = touch.clientY;
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            mouse.x = touch.clientX;
+            mouse.y = touch.clientY;
+
+            if (mouse.isDown) {
+                const vx = (mouse.x - lastMouse.x) * 0.5;
+                const vy = (mouse.y - lastMouse.y) * 0.5;
+                spawnParticles(mouse.x, mouse.y, 3, vx, vy);
+                lastMouse.x = mouse.x;
+                lastMouse.y = mouse.y;
             }
+        });
 
-            generateLevel(level);
+        canvas.addEventListener('touchend', () => {
+            mouse.isDown = false;
+        });
+
+        // Settings Functions
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            panel.classList.toggle('hidden');
         }
 
-        function nextLevel() {
-            document.getElementById('winOverlay').classList.add('hidden');
-            level++;
-            lives = Math.min(lives + 1, 5); // Bonus life
-            generateLevel(level);
+        function updateGravity() {
+            const slider = document.getElementById('gravitySlider');
+            gravity = parseFloat(slider.value);
+            document.getElementById('gravityValue').textContent = gravity.toFixed(1);
         }
 
-        // Prevent scrolling on mobile
-        document.body.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+        function updateSize() {
+            const slider = document.getElementById('sizeSlider');
+            particleRadius = parseInt(slider.value);
+            document.getElementById('sizeValue').textContent = particleRadius;
+        }
+
+        function updateViscosity() {
+            const slider = document.getElementById('viscositySlider');
+            viscosity = parseFloat(slider.value);
+            document.getElementById('viscosityValue').textContent = viscosity.toFixed(2);
+        }
+
+        function updateTension() {
+            const slider = document.getElementById('tensionSlider');
+            surfaceTension = parseFloat(slider.value);
+            document.getElementById('tensionValue').textContent = surfaceTension.toFixed(1);
+        }
+
+        function setColor(index) {
+            currentPalette = index;
+            document.querySelectorAll('.color-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+        }
+
+        function toggleGravity() {
+            gravityEnabled = !gravityEnabled;
+        }
+
+        function updateParticleCount() {
+            document.getElementById('particleCount').textContent = particles.length;
+        }
+
+        // Initialize
+        animate();
+
+        // Add initial particles
+        setTimeout(() => {
+            addParticles();
+        }, 500);
     </script>
 </body>
 
